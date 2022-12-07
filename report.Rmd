@@ -1,0 +1,325 @@
+---
+title: "The Formation of Co-authorship Networks - A Case Study of the SOCIUM Research Institute"
+author: "Christine Hedde - von Westernhagen^[c.hedde-vonwesternhagen@students.uu.nl]"
+date: "05.08.2022"
+output: 
+  pdf_document:
+    number_sections: false
+    fig_caption: true
+header-includes:
+  - \usepackage{setspace}\spacing{1.5}
+  - \usepackage{float}
+bibliography: references.bib
+link-citations: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      include = FALSE,
+                      fig.align = "center")
+
+library(xlsx)
+library(dplyr)
+library(statnet)
+library(btergm)
+library(modelsummary)
+```
+
+\newpage
+
+# Introduction
+
+Over the course of the last century - and more rapidly so for the past twenty years - the amount of co-authored scientific literature has steadily increased in nearly every discipline [@henriksen2016]. This development has also been emergent in the social sciences where co-authorship has traditionally been much less prominent than in the natural sciences [e.g. @wallace2012; @wuchty2007]. When investigating co-authorship behavior, research most often draws on large bibliographic databases which are mainly comprised of peer-reviewed journal articles. In the social sciences, however, other publication types like books and book chapters, as well as national and non-scholarly publications, still make up a large share of scientific output [@hicks2005]. The field is therefore relatively understudied with regards to assessing empirical collaboration behavior [for an exception see @leifeld2018].
+
+This study aims at counteracting the neglect of social science co-authorship practices in the literature by accessing the complete scientific publication data of a well-established research center at the University of Bremen. The dataset encompasses a network of 240 authors over the course of ten years (2010-2019). Alongside the bibliographic entries, several other features to investigate the generative process behind this case of co-authorship were encoded during the data collection process. To account for the interdependent as well as temporal nature of the data, I employ the temporal version of an exponential random graph model (TERGM) to explain the emergence of co-authorship, i.e., the formation of ties in this network.
+
+I proceed as follows: The next section provides a theoretical foundation of scientific collaboration practices, highlighting differences between the social sciences and other disciplines. Section three gives a brief introduction to the case of the SOCIUM research center. In the fourth section, I describe the data and statistical methodology used to investigate co-authorship emergence. Results are presented in section five, followed by a conclusion.
+
+
+# Collaboration practices in the social sciences
+
+In defining collaborative research, the broadest perspective would consider even a helpful remark at a conference as part of the process, and advancing science would be an endeavor of the entire global scientific community. Far more commonly, however, scientometric studies are conducted that use co-authorship or citation behavior as indicators for collaboration. Only few examples exist that combine qualitative and quantitative approaches [e.g. @laband2000]. Another distinction has to be made between inter- and intra-disciplinary research. Even though collaboration has generally increased for both types, there exist noteworthy particularities for the specific disciplines [@vanrijnsoever2011].
+
+When looking at driving forces of collaborative research, an increased resource intensity can be attributed to both the natural and social sciences. While for the natural sciences material aspects like laboratories, technical supply, and the respective funding play a large role [@cronin2001; @wuchty2007], the need of more diverse knowledge resources in the form of experts for quantitative methods and statistics is of more importance in the social sciences [@fisher1998; @moody2004].
+
+Another general development in scientific practice that incentivizes co-authorship has been the growing importance of publication for career advancement, especially for young researchers [@hangel2017]. This tendency is reenforced by the establishment of performance measures like impact factors or citation indices for the evaluation of researchers [@ingwersen2014; @ossenblok2012]. Empirical evidence suggests that collaboration is indeed highly beneficial for researchers in terms of research impact and career advancement [@li2013; @lutter2016; @wuchty2007].
+
+Acknowledging this positive trend in collaborative practices, the question arises how researchers choose their co-authors. Two of the most important contributing factors for co-authorship are likely to be topic similarity and publication strategy [e.g. @leifeld2018]. Within research domains, however, it has become more popular to collaborate with people having complementary skills, most often specialized analysis methods [@moody2004]. Another empirical pattern is that of supervisory relationships, where senior researchers co-author the work of multiple graduate students. Collaboration between multiple senior researchers, on the other hand, is less common. While the trend has been stagnating over the past years, geographic location also still plays a role in the choice of collaboration partners [@hunter2008]. The prevalence of same- or cross-gender collaboration seems to be largely dependent on the gender composition of the discipline; the same holds for the general proneness of the respective gender to collaborate [@hunter2008; @laband2000].
+
+
+# The SOCIUM research center
+
+In order to assess the circumstances under which the results of this study apply and in how far they might be generalizable, I lay out the characteristics of the case at hand. The SOCIUM Research Center on Inequality and Social Policy (SOCIUM)
+
+> ‘is the only German research institute in social sciences which deals with theoretical and empirical questions of inequality, social policies and their social and political interdependencies. The interdisciplinary research focuses on the social, economic, political, cultural, organizational, legal, historical and sociomedical conditions and effects of social inequality, public social policies and their interdependencies.’ [@universitatbremen2022]
+
+It currently has 153 active members, most of whom have a background in sociology or political science, but also scientists from related disciplines are present. They together approach the aforementioned topics from within six thematic departments:
+
+1. Theoretical and Normative Foundations
+2. Political Economy of the Welfare State
+3. Dynamics of Inequality in Welfare Societies
+4. Life Course, Life Course Policy, and Social Integration
+5. Health, Long-Term Care and Pensions
+6. Methods Research
+
+Especially the health department differs disciplinarily, having members with a background in pharmacology, epidemiology, public health and administration. All the departments have several working groups that take a narrower thematic approach. Within these working groups researchers work on specific projects that are mostly publicly funded.
+
+The SOCIUM is part of the University of Bremen, a medium-sized public university in Germany, and the SOCIUM is not the only social scientific research institute at the university. In the same building also the Research Centre for International Relations, European Politics, and Political Theory (InIIS) has its offices, and both institutes are part of the Collaborative Research Centre 1342 “Global Dynamics of Social Policy” (CRC). Some members of the CRC that are not part of the SOCIUM or InIIS are located in the mentioned building as well. Additionally, the Bremen International Graduate School of Social Sciences (BIGSSS) is a cooperating partner of the SOCIUM, and a part of the graduate students’ offices are also in that same building. Naturally, members collaborate across those institutes, and an analysis covering all institutes might paint an even more realistic picture.
+
+
+# Data and Methods
+
+## Data on co-authorship
+
+A network of co-authorship relations has been constructed from the publication bibliographies that are available on the SOCIUM’s website^[[www.socium.uni-bremen.de/veroeffentlichungen/](www.socium.uni-bremen.de/veroeffentlichungen/)]. Included are monographs, edited volumes, journal articles, articles in edited volumes, working and discussion papers, and also grey literature, overall making this study more representative of the publication behavior in the social sciences [@hicks2005]. In total, this results in 2278 publications by 1239 authors, 240 of which are or have been members or affiliated members of the institute (as listed on the website). The data was collected for a time span of ten years (January 2010 until December 2019) and is thus available for analysis in ten annual snapshots.
+
+Alongside the bibliographic entries, the dataset has been manually augmented by multiple individual author attributes^[All attributes were coded only for the subset of 240 SOCIUM members.]: gender, department affiliation, being head of a department or a working group, and the total number of publications. Even though there are formally six departments, membership in the methods department only occurs as a secondary membership. For analysis purposes, department affiliation has therefore been reduced to the first five departments.
+
+## Statistical methods
+
+The goal of the analysis lies in explaining the emergence of the co-authorship network as it is observed in ten annual snapshots of the SOCIUM. A suitable tool that explicitly models endogenous network dependencies as well as exogenous factors is the exponential random graph model (ERGM), which can be extended to accommodate temporal dependencies as introduced by @hanneke2010. The T(emporal)ERGM can be expressed as
+
+$$P(N^t|N^{t-K},...,N^{t-1},\theta) = \frac{e^{\theta^\top\Gamma(N^t,N^{t-1},...,N^{t-K})}}{\sum_{i=1}^\mathbb{N} e^{\theta^\top(N_i^t,N_i^{t-1},...,N_i^{t-K})}}$$
+
+which represents the probability $P$ of observing a given network at a given time point conditional on $K$ previously observed networks, but it can equally be interpreted as the probability of a tie between each dyad conditional on the rest of the network. The parameter vector $\theta$ contains the model coefficients that have to be estimated and $\Gamma$ is a vector of explanatory variables consisting of endogenous network statistics as well as exogenous variables computed at each time point. The denominator is the sum over the set of all possible permutations $\mathbb{N}$ of the network with the same number of nodes and serves as a normalizing constant. In the following, I introduce the explanatory variables used in this study.
+
+*Endogenous model terms*
+
+The edges term simply sums the number of edges in a specific network. It serves as a baseline variable analogous to a regression intercept and is defined as
+
+$$\Gamma_{edges}(N^t) = \sum_{i\neq j}N_{ij}^t.$$
+
+Resulting from the observation that researchers are increasingly prone to distribute workload to co-authors with complementary skills, I introduce a model term that captures the tendency of two co-authors having multiple other shared co-authors, in turn manifesting as triadic closure. This term for edge-wise shared partners is further modified by a geometrical decay parameter $\alpha$ that captures how having one or two shared partners is more frequent than, e.g., five or six:
+
+$$\Gamma_{gwesp}(N^t, \alpha) = e^{\alpha} \sum_{h=1}^{n-2} (1-(1-e^{-\alpha})^h) ESP_h(N^t),$$
+
+where $ESP_h(N^t)$ is the number of edges with $h$ shared partners. In attempting to optimize model fit, the parameter $\alpha$ is set to 0.3 in the following analysis. Similarly, the number of co-authors researchers have across the network follows an exponentially decaying distribution. This can be attributed to the higher output of relatively fewer senior researchers compared to many junior researchers who have just started publishing. The corresponding term for the geometrically weighted degree distribution is defined as 
+
+$$\Gamma_{gwd}(N^t, \lambda) = e^{\lambda} \sum_{h=1}^{n-1} (1-(1-e^{-\lambda})^h) D_h(N^t),$$
+where $D_h(N^t)$ is the number of nodes having a degree centrality of $h$, and decay parameter $\lambda = 0.4$. Considering the temporal nature of the data, I test for the extent of edge formation from one year to the next by using the edge innovation term
+
+$$\Gamma_{innovation}(N^t, N^{t-1}) = \sum_{i\neq j}N_{ij}^t(1-N_{ij}^{t-1})$$
+
+which counts the number of edges created at $t$ that were not present in $t-1$. As co-authorship is a relationship that (usually) cannot be dissolved once established, a term to test for stability or loss of edges would not be a meaningful addition to this model.
+
+*Exogenous model terms*
+
+Based on the assumption of possibly different collaboration behaviors I add two node covariate terms to the model, one for department affiliation and one for gender, which are computed as
+
+$$\Gamma_{nodecov}(N^t, \mathbf{x}) = \sum_{i\neq j} x_i N_{ij},$$
+where $\mathbf{x}$ is a vector of covariate values for all nodes. Furthermore, I assume certain homophiliy in co-authorship choice. People in the same department might be more prone to collaborate since their topics are more similar and they often work on the same projects. I also check for gender homophily. The node-match term 
+
+$$\Gamma_{nodematch}(N^t, \mathbf{x}) = \sum_{i\neq j} [x_i = x_j] N_{ij}$$
+adds one to the count when two adjacent nodes have the same covariate value, i.e., when $x_i = x_j$ (and 0 otherwise). A term counting not equal but unequal covariate values is the node-mix term. I use it to test for the prevalence of supervisor-supervisee relationships by evaluating whether department or working group leaders rather collaborate with other status groups than amongst each other. This does not fully capture the hierarchical structure of the SOCIUM but should pick up a reasonable amount of variation in co-authorship behavior since the department and group heads encompass a large share of the senior researchers in the institute.
+
+$$\Gamma_{nodemix}(N^t, \mathbf{x}) = \sum_{i\neq j} [x_i \neq x_j] N_{ij}.$$
+
+*Estimation procedure*
+
+The standard routine for ERGMs uses Maximum Likelihood parameter estimation based on Markov Chain Monte Carlo sampling (MCMC-MLE). This procedure, however, becomes highly computationally intensive with increasing network size and an increasing number of networks in the temporal case. It is furthermore prone to result in degeneracy when the model is not accurately enough reflecting the data generating process. I therefore resort to maximum pseudo-likelihood estimation (MPLE) which has shown to be a consistent estimator with increasing network size and number of time points [@strauss1990] and does not suffer from degeneracy issues. To correct for bias in standard errors yielded by this procedure I employ a nonparametric bootstrap as proposed by @desmarais2012.
+
+# Results
+
+```{r read_data}
+raw_bipart <- read.xlsx("data/soc_pub_all-sci.xlsx", sheetIndex = 1)
+
+auth_att <- read.xlsx("data/auth_attributes.xlsx", sheetIndex = 1)
+```
+
+```{r wrangle_tergm}
+# create list with sub-matrices by year
+split_bipart <- split(raw_bipart, raw_bipart$year)
+
+# drop 36 obs. from 2020
+split_bipart[["2020"]] <- NULL
+
+# fill adjacency matrix year by year
+# (within own environment so objects are not stored to .Global)
+adj_mat_func <- function() {
+  # storage for adjacency matrices by year 
+  one_mode_yrs <- vector("list", length = length(split_bipart))
+
+  # empty adjacency matrix
+  adj_null <- matrix(0, nrow = nrow(auth_att), ncol = nrow(auth_att),
+                   dimnames = list(auth_att$name, auth_att$name))
+  
+  for (i in 1:length(split_bipart)) {
+    # get authors of current network
+    coauth <-
+      sapply(as.character(split_bipart[[i]]$author), strsplit, "; ") %>%
+      lapply(trimws)
+
+    # extract unique authors
+    coauth_uniq <- coauth %>%
+      unlist() %>%
+      unique() %>%
+      sort()
+
+    # make incidence matrix
+    edges <- sapply(coauth, function(x) {coauth_uniq %in% x})
+
+    rownames(edges) <- coauth_uniq
+
+    # multiply to get adjacency matrix
+    adj_mat <- edges %*% t(edges)
+
+    # find authors not present in current matrix
+    no_match_row <- !rownames(adj_null) %in% rownames(adj_mat)
+    no_match_col <- !colnames(adj_null) %in% colnames(adj_mat)
+
+    # extend current matrix to number of rows and columns as final matrix
+    ext_rows <- rbind(adj_mat, adj_null[no_match_row, !no_match_col])
+    ext_cols <- cbind(ext_rows, adj_null[, no_match_col])
+
+    # sort to get current matrix
+    mat_temp <- ext_cols[sort(rownames(adj_null)), sort(colnames(adj_null))]
+
+    # add current matrix to previous one
+    if (i == 1) {
+      one_mode_yrs[[i]] <- mat_temp
+    } else {
+      one_mode_yrs[[i]] <- one_mode_yrs[[i - 1]] + mat_temp
+    }
+  }
+  names(one_mode_yrs) <- names(split_bipart)
+  
+  return(one_mode_yrs)
+}
+
+one_mode_yrs <- adj_mat_func()
+
+```
+
+
+Figure 1 gives an impression of the development of the SOCIUM co-authorship network over time. While initially there was only a minimal amount of collaboration, by the end of 2019 the network has become increasingly connected. Results of the TERGM estimation are presented in Table 1. It can be seen that many of the included model terms significantly contribute to the emergence of the observed network, since their estimates' confidence intervals do not contain zero. All interpretations of the coefficients are conditional on the other current processes in the network as well as the networks from previous time points. 
+
+```{r network_edits_tergm}
+# make network objects from adj. matrices
+nw_yrs <- lapply(one_mode_yrs, network, directed = FALSE)
+
+# add author attributes
+rownames(auth_att) <- auth_att$name
+
+for (i in 1:length(nw_yrs)) {
+  for (j in colnames(auth_att[-1])) {
+    set.vertex.attribute(nw_yrs[[i]], j, as.character(auth_att[[j]]))
+  }
+}
+
+# plot over time
+#sapply(nw_yrs, plot)
+
+
+# reduce to Socium members
+sub_dat <- subset(auth_att, !is.na(dep_cat) & !is.na(tot_pub))
+
+sub_dat$al <- ifelse(is.na(sub_dat$al), 0, sub_dat$al)
+sub_dat$agl <- ifelse(is.na(sub_dat$agl), 0, sub_dat$agl)
+
+soc_yrs <- lapply(one_mode_yrs, function(x) { 
+  x[rownames(sub_dat), rownames(sub_dat)]
+  }
+)
+
+nw_yrs_soc <- lapply(soc_yrs, network, directed = FALSE)
+
+for (i in 1:length(nw_yrs_soc)) {
+  for (j in colnames(sub_dat[-1])) {
+    set.vertex.attribute(nw_yrs_soc[[i]], j, sub_dat[[j]])
+  }
+}
+```
+
+
+```{r plot_nw, include=TRUE, fig.height=4, fig.width=7, fig.cap="Evolution of the socium co-authorship network in yearly snapshots from 2010 to 2019 (top left to bottom right)."}
+par(mfrow = c(2,5), mar = c(0,0.1,0,0.1))
+for (i in 1:10) {plot(nw_yrs_soc[[i]], edge.col = "#5b5b5b", vertex.cex = 1.2)}
+```
+
+
+```{r model_tergm}
+# fit model with MPLE and bootstrapped SEs
+if (file.exists("model.RDS")) {
+  m_tergm <- readRDS("model.RDS")
+} else {
+  m_tergm <- btergm(nw_yrs_soc ~
+                    edges +
+                    gwesp(0.3, fixed = TRUE) +
+                    gwdegree(0.4, fixed = TRUE) + 
+                    nodefactor("dep_cat") +
+                    nodematch("dep_cat") +
+                    nodefactor("female") +
+                    nodematch("female") +
+                    nodemix("agl", base = 2) + 
+                    memory(type = "innovation"),
+                  parallel = "snow",
+                  ncpus = 3,
+                  R = 1000
+                  )
+  saveRDS(m_tergm, "model.RDS")
+}
+```
+
+
+```{r table_tergm, include = TRUE, warning = FALSE}
+terms <- c("Edges", "GWESP", "GWD", "Department 2", "Department 3", "Department 4",
+           "Department 5", "Match Department", "Female", "Match Female", 
+           "Mix non-lead and non-lead", "Mix lead and lead", "Edge innovation")
+names(terms) <- names(m_tergm@coef)
+
+modelsummary(list("TERGM results" = m_tergm), 
+             coef_map = terms,
+             statistic = "conf.int",
+             caption = "Results of the temporal exponential random graph model using maximum pseudo-likelihood estimation and bootstrapped 95 percent confidence intervals. Decay parameters: GWESP 0.3, GWD 0.4. Refrence categories of categorial variables: Department 1, males, mix non-lead and lead.")
+```
+
+
+The coefficients of the endogenous terms for edge-wise shared partners and the degree distribution are both significant. This means that while the network exhibits more edge-wise shared partners as expected in a random network, the coefficient for degree is negative, implying a lower average degree as expected. 
+
+Looking at the department affiliation, department three and four differ significantly from department one (the reference category), both being more likely to show co-authorship behavior. There seems to be no difference for department two and five compared to the reference category. The significant coefficient for matching department affiliation indicates that the network exhibits more homophily regarding this factor as expected under randomness. Converting the coefficient to an odds ratio, it can be concluded that co-authorship is 7.5 times more likely to occur for researchers from the same department. 
+
+Both gender coefficients being insignificant leads to the interpretation that it is neither more likely for one specific gender to collaborate more than the other nor is there a preference to collaborate with the same gender. There is no evidence either for increased mixed-status collaboration (the reference category) compared to two department/working group leaders collaborating. Mixed-status collaboration is, however, more likely to occur than two non-leaders collaborating by a factor of ~4.
+
+The large and significant negative coefficient of the temporal edge innovation term translates to a decreased likelihood of edge formation between nodes in $t$ that were not connected in $t-1$ as compared to a random network. This also becomes evident in the substantive amount of isolates that remain until the last time point (see Figure 1) which would likely not occur under random edge formation.
+
+## Goodness of fit
+
+In terms of endogenous fit, the model seems to reflect the data generating process very well. This can be seen from the first five plots in Figure 2: For each statistic, the solid black line depicting the observed network statistic aligns well with the medians of the underlying boxplots. The boxplots are based on 100 networks that were simulated using the estimated model parameters. 
+
+Furthermore, the last plot in Figure 2 assesses how well the exact placement of the edges can be predicted from the model. This is of interest since the preceding endogenous fit measures do not consider where certain edges are placed but only the amount and structures in which they appear. It is apparent from both the precision-recall curve (dark blue) as well as the receiver-operating characteristics curve (dark red) that the model predicts the location of edges extremely well, since both curves have an overall large distance to the respective light shaded curves representing the null model.
+
+```{r gof}
+# check goodness of fit
+if(file.exists("gof.RDS")) {
+  gof_tergm <- readRDS("gof.RDS")
+} else {
+  gof_tergm <- gof(m_tergm, 
+                   nsim = 100, 
+                   statistics = c(esp, dsp, geodesic, deg, triad.undirected, rocpr), 
+                   parallel = "snow",
+                   ncpus = 3)
+  
+  saveRDS(gof_tergm, "gof.RDS")
+}
+```
+
+```{r plot_gof, include=TRUE, fig.height=4, fig.width=6.2, message=FALSE, fig.cap="Goodness-of-fit plots. Bottom right presents ROC (red) and precision-recall curves (blue), while the other measures assess endogenous model fit."}
+plot(gof_tergm, roc.rgraph = TRUE, pr.rgraph = TRUE)
+```
+
+# Conlcusion
+
+In this study, I investigated the emergence of co-authorship for the case of the SOCIUM research center. I drew on a bibliographic dataset that is highly representative for publication behavior in the social sciences, as it contains not only journal articles but also all other forms of scientific output. For the analysis, I employed a temporal ERGM that explicitly models the development of the network in annual intervals and its endogenous dependencies.
+
+The results are in line with previous findings in several aspects: The amount of triadic closure as captured by edge-wise shared partners is higher than expected under randomness, while the degree distribution is skewed, having a lower average than expected [@leifeld2018; @moody2004]. Furthermore, department membership as well as department homophily play an important role in co-authorship emergence. This can be viewed as support for findings that identify publication strategy and topic similarity as important factors [@leifeld2018]. I do not find evidence for gender differences or preferences in collaboration behavior. There is partial support in the analysis for mixed-status co-authorship being more likely than between researchers with the same institutional status. Lastly, even though the network becomes more connected over the years, there are still many authors that remain without any publications co-authored with other SOCIUM members, which is reflected in a negative edge innovation coefficient.
+
+There are several caveats I would like to highlight, which could be improved upon in future work: First of all, it has to be kept in mind that this is a case study, and thus the extent of generalizability is debatable. Even though the SOCIUM researchers are an extensive cross-section of social science disciplines, the institute's main focus is social inequality. Furthermore, the health department is a bit of an outlier topic-wise. Also, there is a large share of extra-institutional collaboration, which is not captured in the subset of the data used in the analysis. This likely influenced the negative coefficient of edge innovation. The question remains, however, where to draw the boundary of the network.
+
+Future work could furthermore extend the dataset, firstly, temporally, by collecting more recent as well as older publication data of the institute. And secondly, by adding more exogenous attributes, which would allow a more fine-grained analysis. Examples are the type of publication, citation indices of the authors, academic titles and positions, language of the publication, and the exact entry and exit of a member to the institute.
+
+\newpage
+
+# References
+
+<div id="refs"></div>
+
