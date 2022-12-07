@@ -17,7 +17,9 @@ link-citations: true
 knitr::opts_chunk$set(echo = FALSE,
                       include = FALSE,
                       fig.align = "center",
-                      fig.path = "figures/")
+                      fig.path = "figures/",
+                      dev = "png",
+                      dpi = 600)
 
 library(xlsx)
 library(dplyr)
