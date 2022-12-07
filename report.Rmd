@@ -239,8 +239,8 @@ for (i in 1:10) {plot(nw_yrs_soc[[i]], edge.col = "#5b5b5b", vertex.cex = 1.2)}
 
 ```{r model_tergm}
 # fit model with MPLE and bootstrapped SEs
-if (file.exists("model.RDS")) {
-  m_tergm <- readRDS("model.RDS")
+if (file.exists("intermediate/model.RDS")) {
+  m_tergm <- readRDS("intermediate/model.RDS")
 } else {
   m_tergm <- btergm(nw_yrs_soc ~
                     edges +
@@ -256,7 +256,7 @@ if (file.exists("model.RDS")) {
                   ncpus = 3,
                   R = 1000
                   )
-  saveRDS(m_tergm, "model.RDS")
+  saveRDS(m_tergm, "intermediate/model.RDS")
 }
 ```
 
@@ -290,8 +290,8 @@ Furthermore, the last plot in Figure 2 assesses how well the exact placement of 
 
 ```{r gof}
 # check goodness of fit
-if(file.exists("gof.RDS")) {
-  gof_tergm <- readRDS("gof.RDS")
+if(file.exists("intermediate/gof.RDS")) {
+  gof_tergm <- readRDS("intermediate/gof.RDS")
 } else {
   gof_tergm <- gof(m_tergm, 
                    nsim = 100, 
@@ -299,7 +299,7 @@ if(file.exists("gof.RDS")) {
                    parallel = "snow",
                    ncpus = 3)
   
-  saveRDS(gof_tergm, "gof.RDS")
+  saveRDS(gof_tergm, "intermediate/gof.RDS")
 }
 ```
 
