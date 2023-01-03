@@ -273,7 +273,7 @@ names(terms) <- names(m_tergm@coef)
 modelsummary(list("TERGM results" = m_tergm), 
              coef_map = terms,
              statistic = "conf.int",
-             caption = "Results of the temporal exponential random graph model using maximum pseudo-likelihood estimation and bootstrapped 95 percent confidence intervals. Decay parameters: GWESP 0.3, GWD 0.4. Refrence categories of categorial variables: Department 1, males, mix non-lead and lead.")
+             caption = "Results of the temporal exponential random graph model using maximum pseudo-likelihood estimation and bootstrapped 95 percent confidence intervals. Decay parameters: GWESP 0.3, GWD 0.4. Reference categories of categorial variables: Department 1, males, mix non-lead and lead.")
 ```
 
 
