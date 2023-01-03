@@ -1,4 +1,4 @@
-# The Formation of Co-authorship Networks - A Case Study of the SOCIUM Research Institute
+# The Formation of Co-authorship Networks - A Case Study of the SOCIUM Research Institute - *Working paper*
 
 ## Summary
 
@@ -6,15 +6,21 @@ This study aims at counteracting the neglect of social science co-authorship pra
 
 ![grafik](https://github.com/christine-hvw/socium_coauthorship/blob/main/figures/plot_nw-1.png?raw=true)
 
-## Project structure
+## Repository structure and instructions
 
-socium-coauthorship/  
-  ├── data/ -> *raw data used in analyses*  
-  ├── figures/ -> *figures included in report*  
-  ├── intermediate/ -> *intermediate objects*   
-  ├── renv/ -> *package versions*   
-  ├── ...  
-  ├── report.pdf -> *compiled report*  
-  ├── report.Rmd -> *code and text used to compile report*  
-  └── ...  
+|                    |Description         |
+|--------------------|--------------------|
+|socium-coauthorship/|                    |  
+|  ├── data/| raw data used in analyses |
+|  ├── figures/| figures included in report | 
+|  ├── intermediate/| intermediate objects |
+|  ├── renv/| files to restore package versions  |
+|  ├── ...  | |
+|  ├── renv.lock | package versions |
+|  ├── report.pdf|  compiled report  |
+|  ├── report.Rmd|  **code and text used to compile report** |  
+|  └── ...  | |
 
+To reproduce the analyses, download this repository and run `report.Rmd`. More information on how to use the `{renv}` package can be found [here](https://rstudio.github.io/renv/articles/renv.html). In short, the function `renv::restore()` will load package versions as specified in `renv.lock` into your R session.
+
+For any further help or questions please contact c.hedde-vonwesternhagen@students.uu.nl.
