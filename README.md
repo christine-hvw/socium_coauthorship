@@ -21,6 +21,8 @@ This study aims at counteracting the neglect of social science co-authorship pra
 |  ├── report.Rmd|  **code and text used to compile report** |  
 |  └── ...  | |
 
-To reproduce the analyses, download this repository and run `report.Rmd`. More information on how to use the `{renv}` package can be found [here](https://rstudio.github.io/renv/articles/renv.html). In short, the function `renv::restore()` will load package versions as specified in `renv.lock` into your R session.
+To reproduce the analyses, download this repository and run `report.Rmd`. Also, delete the objects in `intermediate/` if you want to re-compute them. They were saved to reduce compilation time of the report.
+
+More information on how to use the `{renv}` package can be found [here](https://rstudio.github.io/renv/articles/renv.html). In short, the function `renv::restore()` will load package versions as specified in `renv.lock` into your R session.
 
 For any further help or questions please contact c.hedde-vonwesternhagen@students.uu.nl.
